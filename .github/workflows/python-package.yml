@@ -38,13 +38,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
     
-    - name: Set initial version if no release exists
-      id: initial_version
-      if: steps.check_release.outputs.no_release == 'true'
-      run: |
-        initial_version="1.0.0"  # Set your desired initial version
-        echo "Setting initial version to $initial_version"
-        echo "::set-output name=initial_version::$initial_version"
+    # - name: Set initial version if no release exists
+    #   id: initial_version
+    #   if: steps.check_release.outputs.no_release == 'true'
+    #   run: |
+    #     initial_version="1.0.0"  # Set your desired initial version
+    #     echo "Setting initial version to $initial_version"
+    #     echo "::set-output name=initial_version::$initial_version"
 
     - name: Parse and bump version
       if: steps.check_release.outputs.no_release == 'false'
@@ -86,12 +86,13 @@ jobs:
     - name: Create a new release
       run: |
         new_version=$1  # Pass the new version as an argument
-        initial_version=$2
+
+        echo "Creating release for version $initial_version"
     
         if [ -n "$new_version" ]; then
           echo "Creating release for version $new_version"
         else
-          new_version=$INITIAL_VERSION  # Use the initial version if no release exists
+          new_version="1.0.0"  # Use the initial version if no release exists
           echo "Creating release for initial version $new_version"
         fi
 
@@ -109,9 +110,7 @@ jobs:
           }'
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        NEW_VERSION: ${{ steps.bump_version.outputs.new_version }}
-        INITIAL_VERSION: ${{ steps.initial_version.initial_version }}
-      
+        NEW_VERSION: ${{ steps.bump_version.outputs.new_version }}      
     
 
   

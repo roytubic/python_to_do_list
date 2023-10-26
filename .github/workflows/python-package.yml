@@ -3,7 +3,7 @@ name: Release Workflow
 on:
   push:
     branches:
-      - setup-release-workflow  # Replace with your main branch name
+      - setup-release-workflow  # Change to your main branch name
 
 jobs:
   release:
@@ -16,15 +16,73 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.11  # Replace with your desired Python version
+        python-version: 3.10  # Replace with your desired Python version
+
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
 
     - name: Install dependencies
       run: pip install -r requirements.txt  # Replace with your dependencies file
 
-    - name: Run release script
-      run: python ./scripts/release.py upload
+    - name: Check if a release exists
+      id: check_release
+      run: |
+        latest_release=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
+        if [ -z "$latest_release" ]; then
+          echo "No existing release found."
+          echo "::set-output name=no_release::true"
+        else
+          echo "Latest release is $latest_release"
+          echo "::set-output name=latest_release::$latest_release"
+        fi
       env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set initial version if no release exists
+      if: steps.check_release.outputs.no_release == 'true'
+      run: |
+        initial_version="1.0.0"  # Set your desired initial version
+        echo "Setting initial version to $initial_version"
+        echo "::set-output name=initial_version::$initial_version"
+
+    - name: Parse and bump version
+      id: bump_version
+      run: |
+        if [ -n "$1" ]; then
+          latest_release=$1  # Pass the latest release as an argument
+          # Parse the latest version
+          major_version=$(echo $latest_release | cut -d'.' -f1)
+          minor_version=$(echo $latest_release | cut-d'.' -f2)
+          patch_version=$(echo $latest_release | cut -d'.' -f3)
+          # Increment the patch version
+          new_version="$major_version.$minor_version.$((patch_version + 1))"
+        else
+          # Use the initial version if no release exists
+          new_version=$2  # Pass the initial version as an argument
+        fi
+        echo "::set-output name=new_version::$new_version"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        initial_version: ${{ steps.set_initial_version.outputs.initial_version }}
+
+    - name: Create a new release
+      if: steps.check_release.outputs.no_release == 'true' || steps.check_release.outputs.no_release != 'true'
+      run: |
+        new_version=$1  # Pass the new version as an argument
+        echo "Creating release for version $new_version"
+        curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "tag_name": "'"$new_version"'",
+            "name": "Release '"$new_version"'",
+            "body": "Release '"$new_version"'",
+            "draft": false,
+            "prerelease": false
+          }'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NEW_VERSION: ${{ steps.bump_version.outputs.new_version }}
+
     
         

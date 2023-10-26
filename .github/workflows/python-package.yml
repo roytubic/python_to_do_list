@@ -43,7 +43,7 @@ jobs:
       if: steps.check_release.outputs.no_release == 'true'
       run: |
         initial_version="1.0.0"  # Set your desired initial version
-        echo "Setting initial version to $new_version"
+        echo "Setting initial version to $initial_version"
         echo "::set-output name=initial_version::$initial_version"
 
     - name: Parse and bump version
@@ -63,7 +63,6 @@ jobs:
         latest_version: ${{ steps.check_release.latest_release }}
 
     - name: Create a new release
-      if: steps.check_release.outputs.no_release == 'true' || steps.check_release.outputs.no_release != 'true'
       run: |
         new_version=$1  # Pass the new version as an argument
     

@@ -30,10 +30,10 @@ jobs:
         latest_release=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name // "none"')
         if [ "$latest_release" == "none" ]; then
           echo "No existing release found."
-          echo "::set-env name=NO_RELEASE::true"
+          echo "NO_RELEASE=true" >> $GITHUB_ENV
         else
           echo "Latest release is $latest_release"
-          echo "::set-env name=LATEST_RELEASE::$latest_release"
+          echo "LATEST_RELEASE=$latest_release" >> $GITHUB_ENV
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
         # Increment the patch version
         new_version="$major_version.$minor_version.$((patch_version + 1))"
         echo "Bumped release to version $new_version"
-        echo "::set-env name=NEW_VERSION::$new_version"
+        echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         # LATEST_RELEASE: ${{ steps.check_release.LATEST_RELEASE }}

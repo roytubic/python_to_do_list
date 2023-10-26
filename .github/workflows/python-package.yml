@@ -59,15 +59,12 @@ jobs:
       run: |
         new_version=${{ env.NEW_VERSION }} # Pass the new version as an argument
     
-        if [ -n "$new_version" ]; then
-          echo "Creating release for version $new_version"
-        else
+        if [ -z "$new_version" ]; then
           new_version="1.0.0"  # Use the initial version if no release exists
-          echo "Creating release for initial version $new_version"
         fi
-
-        echo "Creating release for version $new_version"
     
+        echo "Creating release for version $new_version"
+      
         curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
           -H "Authorization: token $GITHUB_TOKEN" \
           -H "Content-Type: application/json" \

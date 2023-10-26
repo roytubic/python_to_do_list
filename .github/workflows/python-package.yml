@@ -43,16 +43,18 @@ jobs:
       id: bump_version
       run: |
         latest_release=$1  # Pass the latest release as an argument
+        echo "Bumping up from $latest_release"
         # Parse the latest version
         major_version=$(echo $latest_release | cut -d'.' -f1)
         minor_version=$(echo $latest_release | cut -d'.' -f2)
         patch_version=$(echo $latest_release | cut -d'.' -f3)
         # Increment the patch version
         new_version="$major_version.$minor_version.$((patch_version + 1))"
+        echo "Bumped release to version $new_release"
         export NEW_VERSION=$new_version
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        latest_version: ${{ steps.check_release.latest_release }}
+        latest_version: ${{ steps.check_release.env.latest_release }}
 
     
     - name: Create a new release
@@ -80,7 +82,7 @@ jobs:
           }'
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        NEW_VERSION: ${{ steps.bump_version.outputs.new_version }}      
+        NEW_VERSION: ${{ steps.bump_version.env.new_version }}      
     
 
   

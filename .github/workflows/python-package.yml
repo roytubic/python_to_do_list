@@ -63,29 +63,30 @@ jobs:
         latest_version: ${{ steps.check_release.latest_release }}
 
 
-    - name: Create Git tag
-      run: |
-        new_version=$1  # Pass the new version as an argument
+    # - name: Create Git tag
+    #   run: |
+    #     new_version=$1  # Pass the new version as an argument
     
-        if [ -n "$new_version" ]; then
-          echo "Creating release for version $new_version"
-        else
-          new_version=$INITIAL_VERSION  # Use the initial version if no release exists
-          echo "Creating release for initial version $new_version"
-        fi
+    #     if [ -n "$new_version" ]; then
+    #       echo "Creating release for version $new_version"
+    #     else
+    #       new_version=$INITIAL_VERSION  # Use the initial version if no release exists
+    #       echo "Creating release for initial version $new_version"
+    #     fi
 
-        echo "Creating Git tag for version $new_version"
-        git tag -a "$new_version" -m "Version $new_version"
-        git push origin "$new_version"
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        NEW_VERSION: ${{ steps.bump_version.outputs.new_version }}
-        INITIAL_VERSION: ${{ steps.initial_version.initial_version }}
+    #     echo "Creating Git tag for version $new_version"
+    #     git tag -a "$new_version" -m "Version $new_version"
+    #     git push origin "$new_version"
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+    #     NEW_VERSION: ${{ steps.bump_version.outputs.new_version }}
+    #     INITIAL_VERSION: ${{ steps.initial_version.initial_version }}
 
     
     - name: Create a new release
       run: |
         new_version=$1  # Pass the new version as an argument
+        initial_version=$1
     
         if [ -n "$new_version" ]; then
           echo "Creating release for version $new_version"

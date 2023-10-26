@@ -64,7 +64,6 @@ jobs:
 
 
     - name: Create Git tag
-      if: steps.check_release.outputs.no_release == 'true' || steps.check_release.outputs.no_release != 'true'
       run: |
         new_version=$1  # Pass the new version as an argument
     

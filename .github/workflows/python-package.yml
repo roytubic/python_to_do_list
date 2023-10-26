@@ -39,7 +39,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
 
     - name: Parse and bump version
-      if: steps.check_release.env.no_release != 'true'
+      if: steps.check_release.NO_RELEASE != 'true'
       id: bump_version
       run: |
         latest_release=$1  # Pass the latest release as an argument
@@ -54,7 +54,7 @@ jobs:
         export NEW_VERSION=$new_version
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        latest_version: ${{ steps.check_release.env.latest_release }}
+        latest_version: ${{ steps.check_release.LATEST_RELEASE }}
 
     
     - name: Create a new release
@@ -82,7 +82,7 @@ jobs:
           }'
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        NEW_VERSION: ${{ steps.bump_version.env.new_version }}      
+        NEW_VERSION: ${{ steps.bump_version.NEW_VERSION }}      
     
 
   

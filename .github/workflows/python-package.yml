@@ -42,7 +42,7 @@ jobs:
       if: steps.check_release.outputs.no_release != 'true'
       id: bump_version
       run: |
-        latest_release=steps.check_release.outputs.latest_release  # Pass the latest release as an argument
+        latest_release=${{  steps.check_release.outputs.latest_release  }}  # Pass the latest release as an argument
         echo "Bumping up from $latest_release"
         # Parse the latest version
         major_version=$(echo $latest_release | cut -d'.' -f1)
@@ -59,7 +59,7 @@ jobs:
     
     - name: Create a new release
       run: |
-        new_version=steps.bump_version.outputs.new_version # Pass the new version as an argument
+        new_version=${{  steps.bump_version.outputs.new_version  }} # Pass the new version as an argument
     
         if [ -n "$new_version" ]; then
           echo "Creating release for version $new_version"

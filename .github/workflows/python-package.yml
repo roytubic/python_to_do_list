@@ -37,13 +37,6 @@ jobs:
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-    
-    - name: Set initial version if no release exists
-      if: steps.check_release.outputs.no_release == 'true'
-      run: |
-        new_version="1.0.0"  # Set your desired initial version
-        echo "Setting initial version to $new_version"
-        echo "::set-output name=new_version::$new_version"
 
     - name: Parse and bump version
       if: steps.check_release.outputs.no_release == 'false'
@@ -65,20 +58,38 @@ jobs:
       if: steps.check_release.outputs.no_release == 'true' || steps.check_release.outputs.no_release != 'true'
       run: |
         new_version=$1  # Pass the new version as an argument
-        echo "Creating release for version $new_version"
-        curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
-          -H "Authorization: token $GITHUB_TOKEN" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "tag_name": "'"$new_version"'",
-            "name": "Release '"$new_version"'",
-            "body": "Release '"$new_version"'",
-            "draft": false,
-            "prerelease": false
-          }'
+        initial_version=$1
+
+        if [ -n "$new_version" ]; then
+          echo "Creating release for version $new_version"
+          curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "tag_name": "'"$new_version"'",
+              "name": "Release '"$new_version"'",
+              "body": "Release '"$new_version"'",
+              "draft": false,
+              "prerelease": false
+            }'
+        else
+          echo "Creating release for version $initial_version"
+          curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "tag_name": "'"$initial_version"'",
+              "name": "Release '"$initial_version"'",
+              "body": "Release '"$initial_version"'",
+              "draft": false,
+              "prerelease": false
+            }'
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         NEW_VERSION: ${{ steps.bump_version.outputs.new_version }}
-
+        INITIAL_VERSION: "1.0.0"
     
-        
+
+  
+      

@@ -86,7 +86,7 @@ jobs:
     - name: Create a new release
       run: |
         new_version=$1  # Pass the new version as an argument
-        initial_version=$1
+        initial_version=$2
     
         if [ -n "$new_version" ]; then
           echo "Creating release for version $new_version"

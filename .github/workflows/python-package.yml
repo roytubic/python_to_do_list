@@ -22,7 +22,7 @@ jobs:
       run: pip install -r requirements.txt  # Replace with your dependencies file
 
     - name: Run release script
-      run: python ../scripts/release.py upload
+      run: python ./scripts/release.py upload
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}

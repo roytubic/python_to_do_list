@@ -11,12 +11,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9  # Replace with your desired Python version
+        python-version: 3.11  # Replace with your desired Python version
 
     - name: Install jq
       run: sudo apt-get update && sudo apt-get install -y jq
@@ -36,7 +36,7 @@ jobs:
           echo "::set-output name=latest_release::$latest_release"
         fi
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
 
     - name: Set initial version if no release exists
       if: steps.check_release.outputs.no_release == 'true'
@@ -62,7 +62,7 @@ jobs:
         fi
         echo "::set-output name=new_version::$new_version"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         initial_version: ${{ steps.set_initial_version.outputs.initial_version }}
 
     - name: Create a new release
@@ -81,7 +81,7 @@ jobs:
             "prerelease": false
           }'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         NEW_VERSION: ${{ steps.bump_version.outputs.new_version }}
 
     

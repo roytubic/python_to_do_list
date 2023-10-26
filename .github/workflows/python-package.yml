@@ -3,7 +3,7 @@ name: Release Workflow
 on:
   push:
     branches:
-      - main  # Replace with your main branch name
+      - setup-release-workflow  # Replace with your main branch name
 
 jobs:
   release:

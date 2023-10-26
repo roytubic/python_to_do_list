@@ -54,8 +54,6 @@ jobs:
         echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        # LATEST_RELEASE: ${{ steps.check_release.LATEST_RELEASE }}
-
     
     - name: Create a new release
       run: |
@@ -81,9 +79,7 @@ jobs:
             "prerelease": false
           }'
       env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        # NEW_VERSION: ${{ steps.bump_version.NEW_VERSION }}      
-    
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}    
 
   
       

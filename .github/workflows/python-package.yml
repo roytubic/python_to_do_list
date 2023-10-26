@@ -70,7 +70,7 @@ jobs:
           -H "Authorization: token $GITHUB_TOKEN" \
           -H "Content-Type: application/json" \
           -d '{
-            "tag_name": "Python to do list" + "'"$new_version"'",
+            "tag_name": "'"$new_version"'",
             "name": "Release '"$new_version"'",
             "body": "Release '"$new_version"'",
             "draft": false,

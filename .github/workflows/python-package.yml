@@ -39,7 +39,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
 
     - name: Parse and bump version
-      if: steps.check_release.outputs.no_release == 'false'
+      if: steps.check_release.env.no_release != 'true'
       id: bump_version
       run: |
         latest_release=$1  # Pass the latest release as an argument
